@@ -12,12 +12,11 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, BOTH_OFF, ONE_ON, TWO_ON, BOTH_ON} state;
+enum States {Start, BOTH_OFF, ONE_ON, TO_ONE_ON, TWO_ON, TO_TWO_ON, BOTH_ON} state;
 void Tick() {
     switch(state) {
         case Start:
 	    state = BOTH_OFF;
-	    PORTC = 0x07;
 	    break;
 	case BOTH_OFF:
 	    if ((PINA & 0x01) == 0x01) {
@@ -36,30 +35,22 @@ void Tick() {
 	case ONE_ON:
 	    if ((PINA & 0x01) == 0x01) {
 	        state = ONE_ON;
-	    }
-	    else if ((PINA & 0x02) == 0x02) {
-		state = TWO_ON;
-	    }
-	    else if ((PINA & 0x03) == 0x03) {
-		state = BOTH_ON;
-	    }
-	    else {
+	    } else {
 	        state = BOTH_OFF;
 	    }
+	    break;
+	case TO_ONE_ON:
+	    state = ONE_ON;
 	    break;
 	case TWO_ON:
 	    if ((PINA & 0x02) == 0x02) {
                 state = TWO_ON;
-	    } 
-	    else if ((PINA & 0x01) == 0x01) {
-		state = ONE_ON;
-	    }
-            else if ((PINA & 0x03) == 0x03) {
-	        state = BOTH_ON;
-            }		
-	    else {
+	    } else {
 	        state = BOTH_OFF;
 	    }
+	    break;
+	case TO_TWO_ON:
+	    state = TWO_ON;
 	    break;
 	case BOTH_ON:
 	    if ((PINA & 0x03) == 0x03) {
@@ -73,12 +64,15 @@ void Tick() {
 	    break;
     }
     switch(state) {
-	case ONE_ON:
+	case Start:
+	    PORTC = 0x07;
+	    break;
+	case TO_ONE_ON:
 	    if (PINC < 9) {
                 PORTC += 1;
 	    }
             break;
-	case TWO_ON:
+	case TO_TWO_ON:
 	    if (PINC > 0) {
 		PORTC -= 1;
 	    }
