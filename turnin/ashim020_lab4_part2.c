@@ -68,12 +68,12 @@ void Tick() {
 	    PORTC = 0x07;
 	    break;
 	case TO_ONE_ON:
-	    if (PINC < 9) {
+	    if (PORTC < 9) {
                 PORTC += 1;
 	    }
             break;
 	case TO_TWO_ON:
-	    if (PINC > 0) {
+	    if (PORTC > 0) {
 		PORTC -= 1;
 	    }
 	    break;
