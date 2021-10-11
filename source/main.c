@@ -36,14 +36,28 @@ void Tick() {
 	case ONE_ON:
 	    if ((PINA & 0x01) == 0x01) {
 	        state = ONE_ON;
-	    } else {
+	    }
+	    else if ((PINA & 0x02) == 0x02) {
+		state = TWO_ON;
+	    }
+	    else if ((PINA & 0x03) == 0x03) {
+		state = BOTH_ON;
+	    }
+	    else {
 	        state = BOTH_OFF;
 	    }
 	    break;
 	case TWO_ON:
 	    if ((PINA & 0x02) == 0x02) {
                 state = TWO_ON;
-	    } else {
+	    } 
+	    else if ((PINA & 0x01) == 0x01) {
+		state = ONE_ON;
+	    }
+            else if ((PINA & 0x03) == 0x03) {
+	        state = BOTH_ON;
+            }		
+	    else {
 	        state = BOTH_OFF;
 	    }
 	    break;
