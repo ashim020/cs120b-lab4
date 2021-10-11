@@ -20,10 +20,10 @@ void Tick() {
 	    break;
 	case BOTH_OFF:
 	    if ((PINA & 0x01) == 0x01) {
-	        state = ONE_ON;
+	        state = TO_ONE_ON;
 	    }
 	    else if ((PINA & 0x02) == 0x02) {
-                state = TWO_ON;
+                state = TO_TWO_ON;
 	    }
 	    else if ((PINA & 0x03) == 0x03) {
 		state = BOTH_ON;
