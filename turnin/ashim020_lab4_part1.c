@@ -20,7 +20,7 @@ void Tick() {
 	    PORTB = 0x01;
 	    break;
 	case ON_PRESS:
-	    state = A0 ? ON_PRESS : ON_RELEASE;
+	    state = PINA ? ON_PRESS : ON_RELEASE;
 	    break;
 	case ON_RELEASE:
 	    if (PINA) {
@@ -31,7 +31,7 @@ void Tick() {
 	    }
 	    break;
 	case OFF_PRESS:
-	    state = A0 ? OFF_PRESS : OFF_RELEASE;
+	    state = PINA ? OFF_PRESS : OFF_RELEASE;
 	    break;
 	case OFF_RELEASE:
 	    if (PINA) {
