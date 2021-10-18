@@ -1,7 +1,7 @@
 /*	Author: Andrew Shim
  *  Partner(s) Name: 
  *	Lab Section: 21
- *	Assignment: Lab # 4  Exercise # 1
+ *	Assignment: Lab # 4  Exercise # 2
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -12,72 +12,75 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, BOTH_OFF, ONE_ON, TO_ONE_ON, TWO_ON, TO_TWO_ON, BOTH_ON} state;
+enum States {Start, INIT, INC, DEC, RESET, S1, S2, S3} state;
 void Tick() {
     switch(state) {
         case Start:
-	    state = BOTH_OFF;
+	    state = INIT;
 	    break;
-	case BOTH_OFF:
-	    if ((PINA & 0x01) == 0x01) {
-	        state = TO_ONE_ON;
+	case S1:
+	    if ((PINA & 0x03) == 0x01) {
+	        state = S1;
 	    }
-	    else if ((PINA & 0x02) == 0x02) {
-                state = TO_TWO_ON;
+	    else if ((PINA & 0x03) == 0x02) {
+                state = DEC;
 	    }
 	    else if ((PINA & 0x03) == 0x03) {
-		state = BOTH_ON;
+		state = RESET;
             }
+	    else if ((PINA & 0x03) == 0x00) {
+		state = INIT;
+	    }
+	    break;
+	case S2:
+	    if ((PINA & 0x03) == 0x01) {
+	        state = INC;
+	    }
+	    else if ((PINA & 0x03) == 0x02) {
+                state = S2;
+	    }
+	    else if ((PINA & 0x03) == 0x03) {
+		state = RESET;
+            }
+	    else if ((PINA & 0x03) == 0x00) {
+		state = INIT;
+	    }
+	    break;
+	case S3:
+	    if ((PINA & 0x03) == 0x00) {
+	        state = INIT;
+	    }
 	    else {
-		state = BOTH_OFF;
+		state = S3;
 	    }
 	    break;
-	case ONE_ON:
-	    if ((PINA & 0x01) == 0x01) {
-	        state = ONE_ON;
-	    } else {
-	        state = BOTH_OFF;
-	    }
+	case INC:
+	    state = S1;
 	    break;
-	case TO_ONE_ON:
-	    state = ONE_ON;
+	case DEC:
+	    state = S2;
 	    break;
-	case TWO_ON:
-	    if ((PINA & 0x02) == 0x02) {
-                state = TWO_ON;
-	    } else {
-	        state = BOTH_OFF;
-	    }
-	    break;
-	case TO_TWO_ON:
-	    state = TWO_ON;
-	    break;
-	case BOTH_ON:
-	    if ((PINA & 0x03) == 0x03) {
-	        state = BOTH_ON;
-	    } else {
-		state = BOTH_OFF;
-            }
+	case RESET:
+	    state = s3;
 	    break;
 	default:
-	    state = Start;
+	    state = INIT;
 	    break;
     }
     switch(state) {
-	case Start:
-	    PORTC = 0x07;
+	case INIT:
 	    break;
-	case TO_ONE_ON:
+	case INC:
 	    if (PORTC < 9) {
                 PORTC += 1;
 	    }
             break;
-	case TO_TWO_ON:
+	case DEC:
 	    if (PORTC > 0) {
 		PORTC -= 1;
 	    }
 	    break;
-	case BOTH_ON:
+	case RESET:
 	    PORTC = 0x00;
 	    break;
 	default:
@@ -89,7 +92,7 @@ void Tick() {
 int main(void) {
     /* Insert DDR and PORT initializations */
     DDRA = 0x00; PORTA = 0xFF;
-    DDRC = 0xFF; PORTC = 0x00;
+    DDRC = 0xFF; PORTC = 0x07;
     /* Insert your solution below */
     while (1) {
         Tick();
